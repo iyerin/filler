@@ -19,6 +19,14 @@ int g_figure_heigth;
 int g_figure_width;
 int g_min_x;
 int	g_min_y;
+int g_inner_width;
+int g_inner_heigth;
+int g_stars;
+int g_x;
+int g_y;
+
+//t_figure g_figure;
+
 
 #endif
 
@@ -43,3 +51,16 @@ int	g_min_y;
 // 	}
 // 	return(figure_cord);
 // }
+
+/*
+.............
+.............
+.............
+.............
+..........*..
+..........***
+.........*.*.
+...........*.
+.............
+.............
+*/
