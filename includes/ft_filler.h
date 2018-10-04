@@ -24,6 +24,8 @@ int g_inner_heigth;
 int g_stars;
 int g_x;
 int g_y;
+char g_enemy_figure;
+char g_my_figure;
 
 //t_figure g_figure;
 
@@ -64,3 +66,20 @@ int g_y;
 .............
 .............
 */
+
+			//field_arr[i] = (unsigned char*)ft_strsub(str, 4, g_field_width);
+			// while (print < g_field_width)
+			// {
+			// 	dprintf(fd, "%d", field_arr[i][print]);
+			// 	print++;
+			// }
+			// j = 4;
+			// print = 0;
+
+						// while(print < g_field_width)
+			// {
+			// 	dprintf(fd, "%d", field_arr[i][print]);
+				
+			// 	print++;
+			// }
+			// dprintf(fd, "\n");

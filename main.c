@@ -1,14 +1,10 @@
 #include "includes/ft_filler.h"
 
-#define FIGURE(player_number) (player_number == 1) ? 'O' : 'X'
-
-
-
-int	ft_put_number(int ***arr, int i, int j, int number, int fd)
+int	ft_put_number(int ***arr, int i, int j, int number)
 {
-	int changes = 0;
+	int changes;
 
-	//dprintf(fd, "i = %d\nj = %d\nnumber = %c\n", i, j, number);
+	changes = 0;
 	if ((j - 1 >= 0) && ((*arr)[i][j - 1] == -3))
 	{
 		(*arr)[i][j - 1] = number;
@@ -44,18 +40,14 @@ void ft_fill_field(int ***arr)
 
 	while(changes)
 	{
-		//write(fd, "tyt\n", 4);
 		changes = 0;
 		while(i < g_field_heigth)
 		{
-			//write(fd, "tyttyt2\n", 8);
 			while(j < g_field_width)
 			{
-				//write(fd, "tyttyttyt3", 10);
 				if((*arr)[i][j] == enemy_figure)
 				{
-				//	write(fd, "HUHU", 4);
-					if(ft_put_number(arr, i, j, number, fd))
+					if(ft_put_number(arr, i, j, number))
 						changes = 1;
 				}
 				j++;
@@ -67,6 +59,29 @@ void ft_fill_field(int ***arr)
 		enemy_figure = number;
 		number += 1;
 	}
+
+	//ft_fill_field_victory()
+	i = 0;
+	j = 0;
+	int flag = 0;
+	while(i < g_field_heigth)
+	{
+		while(j < g_field_width)
+		{
+			if ((*arr)[i][j] == -3)
+			{
+				(*arr)[i][j] = 1;
+			}
+			j++;
+		}
+		j = 0;
+		i++;
+	}
+
+
+	i = 0;
+	j = 0;
+
 	while(i < g_field_heigth)
 	{
 		while(j < g_field_width)
@@ -81,10 +96,13 @@ void ft_fill_field(int ***arr)
 	close(fd);
 }
 
-void ft_figure_measure(char **figure_arr, int fd)
+void ft_figure_measure_heigth(char **figure_arr)
 {
-	int i = 0;
-	int j = 0;
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
 
 	while(i < g_figure_heigth)
 	{
@@ -100,6 +118,12 @@ void ft_figure_measure(char **figure_arr, int fd)
 		j = 0;
 		i++;
 	}
+}
+
+void ft_figure_measure_width(char **figure_arr)
+{
+	int i;
+	int j;
 
 	i = 0;
 	j = 0;
@@ -118,13 +142,15 @@ void ft_figure_measure(char **figure_arr, int fd)
 		i = 0;
 		j++;
 	}
-	dprintf(fd, "hei = %d, wid = %d\n", g_inner_heigth, g_inner_width);
 }
 
-void ft_prepare_figure(char ***figure_arr, int fd)
+void ft_prepare_figure(char ***figure_arr)
 {
-	int i = 0;
-	int j = 0;
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
 
 	g_min_x = g_figure_width;
 	g_min_y = g_figure_heigth;
@@ -162,10 +188,9 @@ int ft_figure_fits(int field, char figure, int *cover, int *score)
 	}
 	else
 		return(0);
-
 }
  
-void ft_put_figure(int **field_arr, char **figure_arr, int fd)
+void ft_put_figure(int **field_arr, char **figure_arr)
 {
 	int i_field = 0;
 	int j_field = 0;
@@ -179,77 +204,65 @@ void ft_put_figure(int **field_arr, char **figure_arr, int fd)
 	int cover = 0;
 	int count = 0;
 	int score = 0;
-	int best_score = 1000;
+	int best_score = 100000000;
 
-	dprintf(fd, "1hei = %d, 1wid = %d, 2hei = %d, 2wid = %d, min_x = %d, min_y = %d\n", g_field_heigth, g_field_width, g_figure_heigth, g_figure_width, g_min_x, g_min_y);
+	
 	while((i_field + g_inner_heigth - 1) < g_field_heigth)
 	{
-	//	dprintf(fd, "1 i_figure = %d, j_figure = %d, figure = %c, i_field = %d, j_field = %d, field = %d\n", i_figure, j_figure, figure_arr[i_figure][j_figure], i_field, j_field, field_arr[i_field][j_field]);
 		res_i_field = i_field;
 		while((j_field + g_inner_width - 1) < g_field_width)
 		{
-		//	dprintf(fd, "2 i_figure = %d, j_figure = %d, figure = %c, i_field = %d, j_field = %d, field = %d\n", i_figure, j_figure, figure_arr[i_figure][j_figure], i_field, j_field, field_arr[i_field][j_field]);
 			res_j_field = j_field;
 			while(i_figure < g_figure_heigth)
 			{
-			//	dprintf(fd, "3 i_figure = %d, j_figure = %d, figure = %c, i_field = %d, j_field = %d, field = %d\n", i_figure, j_figure, figure_arr[i_figure][j_figure], i_field, j_field, field_arr[i_field][j_field]);
 				while(j_figure < g_figure_width)
 				{
-				//	dprintf(fd, "4 i_figure = %d, j_figure = %d, figure = %c, i_field = %d, j_field = %d, field = %d\n", i_figure, j_figure, figure_arr[i_figure][j_figure], i_field, j_field, field_arr[i_field][j_field]);
 					if (figure_arr[i_figure][j_figure] == '*')
 						if (ft_figure_fits(field_arr[i_field][j_field], figure_arr[i_figure][j_figure], &cover, &score))
 							count++;
-				
 					j_figure++;
 					j_field++;
-				//	dprintf(fd, "4 i_figure = %d, j_figure = %d, i_field = %d, j_field = %d\n", i_figure, j_figure, i_field, j_field);
 				}
-				//dprintf(fd, "cover = %d, count = %d, score = %d\n", cover, count, score);
-				if((cover == 1) && (count == g_stars))
-				{
-					dprintf(fd, "cover = %d, count = %d, score = %d\n", cover, count, score);
-					if (score < best_score)
-					{
-						best_score = score;
-						g_x = i_field - g_min_y;
-						g_y = j_field - g_min_x - 1;
-						dprintf(fd, "x = %d, y = %d\n", g_x, g_y);
-					}
-				}
-				//write(fd, "tyt", 3);
 				j_figure = g_min_x;
 				j_field = res_j_field;
 				i_figure++;
 				i_field++;
-
-				//dprintf(fd, "3 i_figure = %d, j_figure = %d, i_field = %d, j_field = %d\n", i_figure, j_figure, i_field, j_field);
-				//dprintf(fd, "2 i_figure = %d, j_figure = %d, figure = %c, i_field = %d, j_field = %d, field = %d\n", i_figure, j_figure, figure_arr[i_figure][j_figure], i_field, j_field, field_arr[i_field][j_field]);
+			}
+			if((cover == 1) && (count == g_stars))
+			{
+				if (score < best_score)
+				{
+					best_score = score;
+					g_x = res_i_field - g_min_y;
+					g_y = res_j_field - g_min_x;
+				}
 			}
 			score = 0;
 			cover = 0;
 			count = 0;
-
-
-		//	dprintf(fd, "cover = %d, count = %d, score = %d\n", cover, count, score);
-
 			i_field = res_i_field;
 			j_field = res_j_field;
 			j_field++;
 			i_figure = g_min_y;
-
-			//dprintf(fd, "2 i_figure = %d, j_figure = %d, i_field = %d, j_field = %d\n", i_figure, j_figure, i_field, j_field);
 		}
 		j_field = 0;
 		i_field = res_i_field;
 		i_field++;
-
-		//dprintf(fd, "1 i_figure = %d, j_figure = %d, i_field = %d, j_field = %d\n", i_figure, j_figure, i_field, j_field);
 	}
-	//dprintf(fd, "x = %d\n, y = %d\n", g_x, g_y);
-	//write(fd, "tyt", 3);
-	//printf("")
 }
 
+void	*ft_free_arr(void **arr)
+{
+	size_t i;
+
+	i = 0;
+	if (arr == 0)
+		return (arr);
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+	return (0);
+}
 
 void ft_get_field_size(char *str)
 {
@@ -258,7 +271,7 @@ void ft_get_field_size(char *str)
 	tmp_arr = ft_strsplit(str, ' ');
 	g_field_heigth = ft_atoi(tmp_arr[1]);
 	g_field_width = ft_atoi(tmp_arr[2]);
-	//free tmp_arr
+	ft_free_arr((void **)tmp_arr);
 }
 
 void ft_get_figure_size(char *str)
@@ -268,14 +281,11 @@ void ft_get_figure_size(char *str)
 	tmp_arr = ft_strsplit(str, ' ');
 	g_figure_heigth = ft_atoi(tmp_arr[1]);
 	g_figure_width = ft_atoi(tmp_arr[2]);
-	//free tmp_arr
+	ft_free_arr((void **)tmp_arr);
 }
 
 void ft_null_variables()
 {
-	g_field_width = 0;
-	g_field_heigth = 0;
-	g_player_number = 0;
 	g_figure_heigth = 0;
 	g_figure_width = 0;
 	g_min_x = 0;
@@ -286,105 +296,114 @@ void ft_null_variables()
 	g_x = 0;
 	g_y = 0;
 }
-
-void ft_parser_filler(char **return_str)
+void ft_solver(int ***field_arr, char ***figure_arr)
 {
-	int fd = open("myres", O_WRONLY);
+	ft_fill_field(field_arr);
+	ft_prepare_figure(figure_arr);
+	ft_figure_measure_heigth(*figure_arr);
+	ft_figure_measure_width(*figure_arr);
+	ft_put_figure(*field_arr, *figure_arr);
+	//dprintf(fd, "===== RES ===== %d %d\n", g_x, g_y);
+	ft_putstr(ft_itoa(g_x));
+	write(1, " ", 1);
+	ft_putstr(ft_itoa(g_y));
+	write(1, "\n", 1);
+	ft_null_variables();
+	ft_free_arr((void **)*field_arr);
+	ft_free_arr((void **)*figure_arr);
+}
 
-	int **field_arr;
-	char **figure_arr;
-	char *str;
-	int i = 0;
-	int j = 4;
-	int flag = 0;
+void ft_get_size_player(char *str, int ***field_arr, int *flag)
+{
 	int arr_iter = 0;
 
-	int print = 0;
-	int stop = 0;
-
-	ft_null_variables();
-	while((stop < g_figure_heigth || !stop))
+	ft_get_field_size(str);
+	*field_arr = (int**)malloc(sizeof(int*) * (g_field_heigth + 1));
+	while(arr_iter < g_field_heigth)
 	{
-		get_next_line(0, &str);
-		//dprintf(fd, "\nstr = %s", str);
+		(*field_arr)[arr_iter] = (int*)malloc(sizeof(int) * g_field_width);
+		arr_iter++;
+	}
+	(*field_arr)[arr_iter] = NULL;
+	*flag = 1;
+	g_enemy_figure = g_player_number == 1 ? 'X' : 'O';
+	g_my_figure = g_player_number == 1 ? 'O' : 'X';
+}
 
+void ft_get_field(char *str, int ***field_arr, int *i)
+{
+	int j;
+
+	j = 0;
+	while(str[j])
+	{
+		if (str[j] == g_enemy_figure)
+			(*field_arr)[*i][j - 4] = -1;
+		if (str[j] == g_my_figure)
+			(*field_arr)[*i][j - 4] = -2;
+		if (str[j] == '.')
+			(*field_arr)[*i][j - 4] = -3;
+		j++;
+	}
+	(*i)++;
+}
+
+void ft_parser_filler(int fd)
+{
+	int **field_arr = NULL;
+	char **figure_arr = NULL;
+	char *str;
+	int i;
+	//int j = 0;
+	int stop = 0;
+	int k = 0;
+	int flag = 0;
+
+	i = 0;
+	ft_null_variables();
+	while (get_next_line(0, &str))
+	{
+		flag = 0;
 		if (*str == '$')
 			g_player_number = str[10] - '0';
 		else if ((*(str + 1) == 'l') && (!flag))
-		{
-			ft_get_field_size(str);
-			field_arr = (int**)malloc(sizeof(int*) * g_field_heigth);
-			while(arr_iter < g_field_heigth)
-			{
-				field_arr[arr_iter] = (int*)malloc(sizeof(int) * g_field_width);
-				arr_iter++;
-			}
-			flag = 1;
-		}
+			ft_get_size_player(str, &field_arr, &flag);
 		else if (*str >= '0' && *str <= '9')
-		{
-
-			while(str[j])
-			{
-				//write(fd, "tyt", 3);
-				if (str[j] == 'O')
-					field_arr[i][j - 4] = -1;
-				if (str[j] == 'X')
-					field_arr[i][j - 4] = -2;
-				if (str[j] == '.')
-					field_arr[i][j - 4] = -3;
-				//write(fd, "tyt", 3);
-				j++;
-			}
-			//field_arr[i] = (unsigned char*)ft_strsub(str, 4, g_field_width);
-			// while (print < g_field_width)
-			// {
-			// 	dprintf(fd, "%d", field_arr[i][print]);
-			// 	print++;
-			// }
-			// j = 4;
-			// print = 0;
-			i++;
-			j = 0;
-		}
-
+			ft_get_field(str, &field_arr, &i);
 		else if (*(str + 1) == 'i')
 		{
 			ft_get_figure_size(str);
-			figure_arr = (char**)malloc(sizeof(char*) * g_figure_heigth);
-			//dprintf(fd, "fig_hei = %d\n", g_figure_heigth);
+			figure_arr = (char**)malloc(sizeof(char*) * (g_figure_heigth + 1));
 		}
 		else if ((*str == '.') || (*str == '*'))
 		{
-			figure_arr[j] = ft_strdup(str);
-			//dprintf(fd, "fig = %s\n", figure_arr[j]);
-			j++;
+			figure_arr[k] = ft_strdup(str);
+			k++;
+			if (k == g_figure_heigth)
+				figure_arr[k] = NULL;
 			stop++;
-			//dprintf(fd, "stop = %d", stop);
 		}
-		// else if (*str == '=')
-		// 	return (0);
-		ft_strdel(&str);		
+		if (stop >= g_figure_heigth && (g_figure_heigth))
+		{
+			ft_solver(&field_arr, &figure_arr);
+			stop = 0;
+			i = 0;
+			k = 0;
+		}
+		ft_strdel(&str);
 	}
 
-	ft_fill_field(&field_arr);
-	ft_prepare_figure(&figure_arr, fd);
-	ft_figure_measure(figure_arr, fd);
-	ft_put_figure(field_arr, figure_arr, fd);
-	printf("%d %d\n", g_x, g_y);
 
-	dprintf(fd, "========================");
-	//dprintf(fd, "min_x = %d\nmin_y = %d\n", g_min_x, g_min_y);
-
-	close(fd);
+	dprintf(fd, "oK5 =====================\n");
 }
 
 int main(void)
 {
-	// while (1)
-	// {
-		ft_parser_filler(0);
-	// }
+	int fd = open("myres", O_WRONLY | O_TRUNC);
+
+	ft_parser_filler(fd);
+
+	// dprintf(fd, "%s\n", system ("leaks iyerin.filler") );
 	return (0);
 }
 
